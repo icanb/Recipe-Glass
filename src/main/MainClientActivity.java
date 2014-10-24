@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.recipe.R;
 import com.google.android.glass.app.Card;
@@ -45,6 +46,8 @@ public class MainClientActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
+		getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
+
 
 		buildGrilledCheeseCards();
 		buildTunaSandwichCards();
@@ -175,7 +178,6 @@ public class MainClientActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-			System.out.println("Tap");
 			openOptionsMenu();
 			return true;
 		}
