@@ -30,6 +30,15 @@ public class MainClientActivity extends Activity {
 					"Pile the grated cheese in an even layer over the entire surface of the bread.",
 					"Let the cheese melt until it's almost entirely melted"));
 
+	
+	private ArrayList<Card> tSandwichCards = new ArrayList<Card>();
+	private ArrayList<String> tSandwichCardsDirections = new ArrayList<String>(
+			Arrays.asList("Transfer the tuna to a bowl.",
+					"Add the other ingredients to the tuna.",
+					"Mix together. And add some mayo.", "Spread onto a bread."));
+
+	private String currentDish = "Grilled Cheese";
+
 	private CardScrollView csvCardsView;
 
 	@Override
@@ -38,6 +47,7 @@ public class MainClientActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		buildGrilledCheeseCards();
+		buildTunaSandwichCards();
 
 		csvCardsView = new CardScrollView(this);
 		csaAdapter cvAdapter = new csaAdapter();
@@ -49,17 +59,30 @@ public class MainClientActivity extends Activity {
 	private class csaAdapter extends CardScrollAdapter {
 		@Override
 		public int getCount() {
-			return gCheeseCards.size();
+			if (currentDish.equals("Grilled Cheese")) {
+				return gCheeseCards.size();
+			} else {
+				return tSandwichCards.size();
+			}
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return gCheeseCards.get(position);
+			if (currentDish.equals("Grilled Cheese")) {
+				return gCheeseCards.get(position);
+			} else {
+				return tSandwichCards.get(position);
+			}
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			return gCheeseCards.get(position).getView();
+
+			if (currentDish.equals("Grilled Cheese")) {
+				return gCheeseCards.get(position).getView();
+			} else {
+				return tSandwichCards.get(position).getView();
+			}
 		}
 
 		@Override
@@ -85,6 +108,24 @@ public class MainClientActivity extends Activity {
 			gCheeseCards.add(newCard);
 		}
 	}
+	
+	private void buildTunaSandwichCards() {
+
+		for (int i = 0; i < tSandwichCardsDirections.size(); i++) {
+			Card newCard = new Card(this);
+			newCard.setImageLayout(Card.ImageLayout.LEFT);
+			newCard.setText(tSandwichCardsDirections.get(i));
+
+			Resources res = getResources();
+			String mDrawableName = "tuna" + (i + 1);
+			int resID = res.getIdentifier(mDrawableName, "drawable",
+					getPackageName());
+			Drawable drawable = res.getDrawable(resID);
+			newCard.addImage(drawable);
+			tSandwichCards.add(newCard);
+		}
+
+	}
 
 	// Enable "ok glass" to inflate the menu
 	@Override
@@ -98,6 +139,20 @@ public class MainClientActivity extends Activity {
 		}
 		return super.onCreatePanelMenu(featureId, menu);
 	}
+	
+	public void showDish(String dish) {
+		if (dish.equals("Grilled Cheese")) {
+			currentDish = dish;
+		} else {
+			currentDish = dish;
+		}
+
+		csvCardsView = new CardScrollView(this);
+		csaAdapter cvAdapter = new csaAdapter();
+		csvCardsView.setAdapter(cvAdapter);
+		csvCardsView.activate();
+		setContentView(csvCardsView);
+	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -105,8 +160,10 @@ public class MainClientActivity extends Activity {
 				|| featureId == Window.FEATURE_OPTIONS_PANEL) {
 			switch (item.getItemId()) {
 			case R.id.dish_1:
+				showDish("Grilled Cheese");
 				break;
 			case R.id.dish_2:
+				showDish("Tuna Sandwich");
 				break;
 			}
 			return true;
